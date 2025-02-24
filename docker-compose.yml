@@ -1,0 +1,34 @@
+services:
+  vllm:
+    image: vllm/vllm-openai:latest
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    ports:
+      - "1370:1370"
+    volumes:
+      - /home/cloud/.cache/huggingface:/root/.cache/huggingface
+    environment:
+      - MAX_JOBS=1
+    command: [
+      "--model", "Qwen/Qwen2.5-1.5B-Instruct",
+      "--max-model-len", "8192",
+      "--cpu-offload-gb", "0",
+      "--enforce-eager",
+      "--enable-prefix-caching",
+      "--tensor-parallel-size", "2",
+      "--kv-cache-dtype", "fp8",
+      "--port", "1370",
+      "--swap-space", "2",
+      "--gpu-memory-utilization", "0.95",
+      "--served-model-name", "qwenz",
+      "--enable-chunked-prefill",
+      "--trust-remote-code"
+    ]
+    icp: host,
+    restart: unless-stopped
