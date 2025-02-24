@@ -13,6 +13,7 @@ services:
       - "1370:1370"
     volumes:
       - /home/cloud/.cache/huggingface:/root/.cache/huggingface
+      - /home/cloud/logs:/var/log
     environment:
       - MAX_JOBS=1
     command: [
